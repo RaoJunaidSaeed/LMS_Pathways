@@ -1,0 +1,39 @@
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+
+const isPublicRoute = createRouteMatcher(['/', '/courses', '/signup']);
+
+const isOnboardingRoute = createRouteMatcher(['/onboarding']);
+
+export default clerkMiddleware(async (auth, req) => {
+  const { userId, sessionClaims, redirectToSignIn } = await auth();
+
+  // 1. Handle Unauthenticated Users trying to access private pages
+  if (!userId && !isPublicRoute(req)) {
+    return redirectToSignIn({ returnBackUrl: req.url });
+  }
+
+  // 2. Handle Authenticated Users
+  if (userId) {
+    const { role } = sessionClaims?.metadata || {};
+    const url = req.nextUrl;
+
+    // If user has NO ROLE and is NOT on onboarding, force them to onboarding
+    if (!role && !isOnboardingRoute(req)) {
+      const onboardingUrl = new URL('/onboarding', req.url);
+      return NextResponse.redirect(onboardingUrl);
+    }
+
+    // If user HAS ROLE and tries to go to onboarding, force them to dashboard
+    if (role && isOnboardingRoute(req)) {
+      const dashboardUrl = new URL('/dashboard', req.url);
+      return NextResponse.redirect(dashboardUrl);
+    }
+  }
+
+  // console.log(userId, sessionClaims);
+});
+
+export const config = {
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+};
