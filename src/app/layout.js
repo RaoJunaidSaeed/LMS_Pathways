@@ -2,6 +2,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Geist, Geist_Mono } from 'next/font/google';
 import '@/app/_styles/globals.css';
 import Header from '@/components/ui/Header';
+import UserRoleProvider from '@/components/ui/UserRoleProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -24,12 +25,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <Header />
-          <div className="flex justify-center items-center">{children}</div>
-        </body>
-      </html>
+      <UserRoleProvider>
+        <html lang="en">
+          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <Header />
+            <div className="flex justify-center items-center">{children}</div>
+          </body>
+        </html>
+      </UserRoleProvider>
     </ClerkProvider>
   );
 }

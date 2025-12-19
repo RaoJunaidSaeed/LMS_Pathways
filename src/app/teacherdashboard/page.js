@@ -5,17 +5,29 @@ import User from '@/models/User';
 
 export default async function Dashboard() {
   // 1. Get the current user from Clerk
-  const { userId } = auth();
+  const { userId } = await auth();
   const user = await currentUser();
 
   // 2. Fetch the user's role from MongoDB
   // (We check DB to be 100% sure, though Clerk metadata is also an option)
   await connectDB();
-  const dbUser = await User.findOne({ clerkId: userId });
+  let dbUser = await User.findOne({ clerkId: userId });
 
   // Safety: If for some reason they exist in Clerk but not DB, send to onboarding
+  // Safety: If for some reason they exist in Clerk but not DB, create them now (Sync)
   if (!dbUser) {
-    redirect('/onboarding');
+    if (user) {
+      dbUser = await User.create({
+        clerkId: userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.emailAddresses[0]?.emailAddress,
+        imageUrl: user.imageUrl,
+        role: user.publicMetadata?.role || 'teacher',
+      });
+    } else {
+      redirect('/onboarding');
+    }
   }
 
   return (

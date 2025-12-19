@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import LinkTag from './LinkTag';
 
-export default function MobileMenu({ links }) {
+export default function MobileMenu({ links, SignInUp }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const pathname = usePathname();
@@ -60,6 +60,7 @@ export default function MobileMenu({ links }) {
               <LinkTag path={link.path}>{link.label}</LinkTag>
             </div>
           ))}
+          {SignInUp}
         </div>
       )}
     </div>

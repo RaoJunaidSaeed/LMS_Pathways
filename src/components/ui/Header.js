@@ -7,9 +7,6 @@ import Logo from './Logo';
 export default function Header() {
   return (
     <div className="flex sticky top-0 z-50 w-full px-3 py-1.5 justify-between items-center bg-blue-100">
-      {/* <div>
-        <Image src="/logo1.png" alt="Logo" width={50} height={50} />
-      </div> */}
       <LinkTag path={'/'}>
         <Logo />
       </LinkTag>

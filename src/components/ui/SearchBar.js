@@ -1,6 +1,6 @@
 'use client';
 
-import { searchAction } from '@/lib/actions';
+import { searchAction } from '@/lib/actions/search';
 
 export default function SearchBar() {
   return (

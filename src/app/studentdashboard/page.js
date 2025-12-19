@@ -5,17 +5,29 @@ import User from '@/models/User';
 
 export default async function Dashboard() {
   // 1. Get the current user from Clerk
-  const { userId } = auth();
+  const { userId } = await auth();
   const user = await currentUser();
 
   // 2. Fetch the user's role from MongoDB
   // (We check DB to be 100% sure, though Clerk metadata is also an option)
   await connectDB();
-  const dbUser = await User.findOne({ clerkId: userId });
+  let dbUser = await User.findOne({ clerkId: userId });
 
   // Safety: If for some reason they exist in Clerk but not DB, send to onboarding
+  // Safety: If for some reason they exist in Clerk but not DB, create them now (Sync)
   if (!dbUser) {
-    redirect('/onboarding');
+    if (user) {
+      dbUser = await User.create({
+        clerkId: userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.emailAddresses[0]?.emailAddress,
+        imageUrl: user.imageUrl,
+        role: user.publicMetadata?.role || 'student',
+      });
+    } else {
+      redirect('/onboarding');
+    }
   }
 
   return (
@@ -34,7 +46,7 @@ export default async function Dashboard() {
       {/* CONDITIONAL RENDERING BASED ON ROLE */}
       <div className="max-w-7xl mx-auto">
         {/* --- INSTRUCTOR VIEW --- */}
-        {dbUser.role === 'teacher' && (
+        {dbUser.role === 'student' && (
           <div className="grid md:grid-cols-3 gap-6">
             <StatCard title="Total Students" value="0" />
             <StatCard title="Active Courses" value="0" />

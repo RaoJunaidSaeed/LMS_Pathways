@@ -26,12 +26,11 @@ export default clerkMiddleware(async (auth, req) => {
 
     // If user HAS ROLE and tries to go to onboarding, force them to dashboard
     if (role && isOnboardingRoute(req)) {
-      const dashboardUrl = new URL('/dashboard', req.url);
+      const targetPath = role === 'student' ? '/studentdashboard' : '/teacherdashboard';
+      const dashboardUrl = new URL(targetPath, req.url);
       return NextResponse.redirect(dashboardUrl);
     }
   }
-
-  // console.log(userId, sessionClaims);
 });
 
 export const config = {

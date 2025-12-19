@@ -10,9 +10,11 @@ export default function OnboardingPage() {
   const router = useRouter();
 
   const handleSubmit = async (formData) => {
-    await completeOnboarding(formData);
-    // Force a reload so the frontend picks up the new metadata
-    // window.location.href = '/dashboard';
+    const res = await completeOnboarding(formData);
+    if (res?.success) {
+      await user?.reload();
+      router.push(res.role === 'student' ? '/studentdashboard' : '/teacherdashboard');
+    }
   };
 
   return (
