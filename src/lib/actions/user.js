@@ -7,7 +7,7 @@ import User from '@/models/User';
 
 export async function completeOnboarding(formData) {
   const { userId } = await auth();
-  console.log('UserId:', userId);
+
   const user = await currentUser();
 
   if (!userId || !user) {
@@ -16,7 +16,6 @@ export async function completeOnboarding(formData) {
   }
 
   const role = formData.get('role');
-  console.error('role:', role);
   try {
     // 1. Connect to DB
     await connectDB();
@@ -36,8 +35,8 @@ export async function completeOnboarding(formData) {
     );
 
     // 3. Update Clerk Metadata (for Middleware/Frontend)
-    console.log('clerkClient:', clerkClient);
     const client = await clerkClient();
+
     await client.users.updateUserMetadata(userId, {
       publicMetadata: { role },
     });

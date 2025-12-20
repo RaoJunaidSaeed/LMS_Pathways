@@ -4,11 +4,10 @@ import { UserRoleContextProvider } from '@/utils/context/UserRoleContext.js';
 export default async function UserRoleProvider({ children }) {
   const { sessionClaims } = await auth();
   const role = sessionClaims?.metadata?.role;
-  console.log(role);
 
   let dashboardUrl = '/';
-  if (role === 'student') dashboardUrl = '/studentdashboard';
-  if (role === 'teacher') dashboardUrl = '/teacherdashboard';
+  if (role === 'student') dashboardUrl = '/student';
+  if (role === 'teacher') dashboardUrl = '/teacher';
 
   const contextValue = {
     role,

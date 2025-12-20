@@ -3,7 +3,7 @@ import LinkTag from './LinkTag';
 import MobileMenu from './MobileMenu';
 import SignInUp from './SignInUp';
 
-const navLinks = [{ path: '/courses', label: 'Courses' }];
+const navLinks = [{ path: '/teacher/courses', label: 'Courses' }];
 
 export default function Navbar() {
   return (

@@ -26,7 +26,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     // If user HAS ROLE and tries to go to onboarding, force them to dashboard
     if (role && isOnboardingRoute(req)) {
-      const targetPath = role === 'student' ? '/studentdashboard' : '/teacherdashboard';
+      const targetPath = role === 'student' ? '/student' : '/teacher';
       const dashboardUrl = new URL(targetPath, req.url);
       return NextResponse.redirect(dashboardUrl);
     }

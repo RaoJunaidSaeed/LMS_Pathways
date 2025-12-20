@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema(
   {
-    clerkId: { type: String, required: true, unique: true }, // The link between Clerk and Mongo
+    clerkId: { type: String, required: true, unique: true },
     email: { type: String, required: true },
     firstName: { type: String },
     lastName: { type: String },
@@ -16,5 +16,4 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Prevent recompilation error in Next.js
 export default mongoose.models.User || mongoose.model('User', UserSchema);
