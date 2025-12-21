@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateCourse } from '@/lib/actions/course';
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function DescriptionForm({ initialData, courseId }) {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function DescriptionForm({ initialData, courseId }) {
     const result = await updateCourse(courseId, { description });
     if (result.success) {
       setIsEditing(false);
+      toast.success('Description updated successfully');
       router.refresh();
     }
     setIsLoading(false);

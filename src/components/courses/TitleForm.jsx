@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateCourse } from '@/lib/actions/course';
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function TitleForm({ initialData, courseId }) {
   const router = useRouter();
@@ -20,9 +21,10 @@ export default function TitleForm({ initialData, courseId }) {
 
     if (result.success) {
       setIsEditing(false);
+      toast.success('Title updated successfully');
       router.refresh(); // Refreshes the server component to show new data
     } else {
-      alert('Something went wrong');
+      toast.error('Something went wrong');
     }
 
     setIsLoading(false);

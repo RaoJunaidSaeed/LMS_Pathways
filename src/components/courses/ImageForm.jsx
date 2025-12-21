@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { updateCourse } from '@/lib/actions/course';
 import { FileUpload } from '@/components/FileUpload';
 import Image from 'next/image';
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function ImageForm({ initialData, courseId }) {
   const router = useRouter();
@@ -17,10 +18,11 @@ export default function ImageForm({ initialData, courseId }) {
     try {
       setIsLoading(true);
       await updateCourse(courseId, values);
+      toast.success('Image updated successfully');
       setIsEditing(false);
       router.refresh();
     } catch {
-      alert('Something went wrong');
+      toast.error('Something went wrong');
     } finally {
       setIsLoading(false);
     }

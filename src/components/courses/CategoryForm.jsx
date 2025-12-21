@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateCourse } from '@/lib/actions/course';
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function CategoryForm({ initialData, courseId, options }) {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function CategoryForm({ initialData, courseId, options }) {
 
     if (result.success) {
       setIsEditing(false);
+      toast.success('Category updated successfully');
       router.refresh();
     }
     setIsLoading(false);

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createAttachment, deleteAttachment } from '@/lib/actions/attachment';
 import { FileUpload } from '@/components/FileUpload';
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function AttachmentForm({ initialData, courseId }) {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function AttachmentForm({ initialData, courseId }) {
     if (url) {
       await createAttachment(courseId, url);
       setIsEditing(false);
+      toast.success('Attachment added successfully');
       router.refresh();
     }
   };
@@ -24,6 +26,7 @@ export default function AttachmentForm({ initialData, courseId }) {
     setDeletingId(id);
     await deleteAttachment(id, courseId);
     setDeletingId(null);
+    toast.success('Attachment deleted successfully');
     router.refresh();
   };
 

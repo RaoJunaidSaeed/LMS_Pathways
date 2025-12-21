@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { publishCourse, unpublishCourse } from '@/lib/actions/course';
-// import { toast } from 'react-hot-toast'; // or use alert()
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function CourseActions({ disabled, courseId, isPublished }) {
   const router = useRouter();
@@ -15,16 +15,16 @@ export default function CourseActions({ disabled, courseId, isPublished }) {
 
       if (isPublished) {
         await unpublishCourse(courseId);
-        alert('Course unpublished'); // Replace with toast if available
+        toast.success('Course unpublished'); // Replace with toast if available
       } else {
         await publishCourse(courseId);
-        alert('Course published!'); // Replace with toast if available
+        toast.success('Course published!'); // Replace with toast if available
         // confetti.onOpen(); // Future feature
       }
 
       router.refresh();
     } catch {
-      alert('Something went wrong');
+      toast.error('Something went wrong');
     } finally {
       setIsLoading(false);
     }

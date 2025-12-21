@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createChapter } from '@/lib/actions/chapter';
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function ChaptersForm({ initialData, courseId }) {
   const router = useRouter();
@@ -21,9 +22,10 @@ export default function ChaptersForm({ initialData, courseId }) {
     if (result.success) {
       setTitle('');
       setIsCreating(false);
+      toast.success('Chapter created successfully');
       router.refresh();
     } else {
-      alert('Something went wrong');
+      toast.error('Something went wrong');
     }
     setIsLoading(false);
   };

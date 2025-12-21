@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteChapter, publishChapter, unpublishChapter } from '@/lib/actions/chapter';
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function ChapterActions({ disabled, courseId, chapterId, isPublished }) {
   const router = useRouter();
@@ -13,12 +14,14 @@ export default function ChapterActions({ disabled, courseId, chapterId, isPublis
       setIsLoading(true);
       if (isPublished) {
         await unpublishChapter(courseId, chapterId);
+        toast.success('Chapter unpublished successfully');
       } else {
         await publishChapter(courseId, chapterId);
+        toast.success('Chapter published successfully');
       }
       router.refresh();
     } catch {
-      alert('Something went wrong');
+      toast.error('Something went wrong');
     } finally {
       setIsLoading(false);
     }
@@ -31,10 +34,11 @@ export default function ChapterActions({ disabled, courseId, chapterId, isPublis
     try {
       setIsLoading(true);
       await deleteChapter(courseId, chapterId);
+      toast.success('Chapter deleted successfully');
       router.refresh();
       router.push(`/teacher/courses/${courseId}`); // Go back to course page
     } catch {
-      alert('Something went wrong');
+      toast.error('Something went wrong');
     } finally {
       setIsLoading(false);
     }

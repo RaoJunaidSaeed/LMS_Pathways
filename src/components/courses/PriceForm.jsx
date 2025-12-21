@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateCourse } from '@/lib/actions/course';
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function PriceForm({ initialData, courseId }) {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function PriceForm({ initialData, courseId }) {
     const result = await updateCourse(courseId, { price: Number(price) });
     if (result.success) {
       setIsEditing(false);
+      toast.success('Price updated successfully');
       router.refresh();
     }
     setIsLoading(false);

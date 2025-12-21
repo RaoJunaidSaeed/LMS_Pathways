@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateChapter } from '@/lib/actions/chapter';
+import { toast } from 'react-hot-toast'; // or use alert()
 
 export default function ChapterDescriptionForm({ initialData, courseId, chapterId }) {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function ChapterDescriptionForm({ initialData, courseId, chapterI
     setIsLoading(true);
     await updateChapter(courseId, chapterId, { description });
     setIsEditing(false);
+    toast.success('Chapter description updated successfully');
     router.refresh();
     setIsLoading(false);
   };
