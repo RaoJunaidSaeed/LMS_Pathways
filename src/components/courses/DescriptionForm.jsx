@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { updateCourse } from '@/lib/actions/course';
-import { toast } from 'react-hot-toast'; // or use alert()
+import { updateCourse } from '@/lib/actions/course'; // Path preserved as requested
+import { toast } from 'react-hot-toast';
+import GlassCard from '@/components/ui/GlassCard';
 
 export default function DescriptionForm({ initialData, courseId }) {
   const router = useRouter();
@@ -16,49 +17,67 @@ export default function DescriptionForm({ initialData, courseId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const result = await updateCourse(courseId, { description });
-    if (result.success) {
-      setIsEditing(false);
-      toast.success('Description updated successfully');
-      router.refresh();
+
+    try {
+      const result = await updateCourse(courseId, { description });
+
+      // Check for success property based on your action's return structure
+      if (result && !result.error) {
+        toast.success('Description updated successfully');
+        setIsEditing(false);
+        router.refresh();
+      } else {
+        toast.error('Something went wrong');
+      }
+    } catch {
+      toast.error('Something went wrong');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
-      <div className="font-medium flex items-center justify-between">
+    <GlassCard className="mt-6">
+      <div className="font-medium flex items-center justify-between text-slate-100">
         Course description
-        <button onClick={toggleEdit} className="text-blue-700 hover:underline text-sm">
+        <button
+          onClick={toggleEdit}
+          className="text-sky-400 hover:text-sky-300 transition text-sm font-semibold"
+        >
           {isEditing ? 'Cancel' : 'Edit description'}
         </button>
       </div>
 
       {!isEditing && (
-        <p className={`text-sm mt-2 ${!initialData.description && 'text-slate-500 italic'}`}>
-          {initialData.description || 'No description provided'}
-        </p>
+        <div className={`text-sm mt-2 ${!initialData.description && 'text-slate-500 italic'}`}>
+          {!initialData.description && 'No description provided'}
+          {initialData.description && (
+            <div className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+              {initialData.description}
+            </div>
+          )}
+        </div>
       )}
 
       {isEditing && (
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <textarea
             disabled={isLoading}
-            className="flex w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="flex w-full rounded-md border border-slate-600 bg-slate-900/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             rows="5"
-            placeholder="e.g. 'This course is about...'"
+            placeholder="e.g. 'This course covers the fundamentals of...'"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
           <button
             disabled={isLoading || !description}
             type="submit"
-            className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-slate-800 disabled:opacity-50"
+            className="bg-sky-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save
           </button>
         </form>
       )}
-    </div>
+    </GlassCard>
   );
 }

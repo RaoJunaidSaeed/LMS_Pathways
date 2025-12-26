@@ -14,28 +14,29 @@ export default async function CoursesPage() {
 
   await connectDB();
 
-  // 1. Fetch ALL courses for this user (Sorted by newest first)
-  const courses = await Course.find({ userId }).sort({ createdAt: -1 }); // -1 means Descending order (Newest first)
-
-  // 2. Serialize Data (Fix for "Plain Object" error)
+  const courses = await Course.find({ userId }).sort({ createdAt: -1 });
   const plainCourses = JSON.parse(JSON.stringify(courses));
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">My Courses</h1>
+    // 🛠️ FIX: Use w-[90%] to take up 90% of screen width and mx-auto to center it
+    <div className="w-[90%] mx-auto py-10">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-sky-400 to-emerald-400">
+          My Courses
+        </h1>
+
         <LinkTag path="/teacher/create">
-          <button className="bg-black text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition">
+          <button className="bg-sky-600 text-white px-5 py-2.5 rounded-md text-sm font-medium hover:bg-sky-500 transition shadow-[0_0_15px_rgba(14,165,233,0.3)] border border-sky-500">
             + New Course
           </button>
         </LinkTag>
       </div>
 
-      {/* 3. The Grid Layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {/* Grid Layout: Kept the column settings from before, but now they have more room to breathe */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
         {plainCourses.length === 0 ? (
-          <div className="col-span-full text-center text-gray-500 mt-10">
-            No courses found. Create your first one!
+          <div className="col-span-full text-center text-slate-400 mt-20 italic">
+            No courses found. Create your first one to get started!
           </div>
         ) : (
           plainCourses.map((course) => (
@@ -47,6 +48,7 @@ export default async function CoursesPage() {
               imageUrl={course.imageUrl}
               category={course.category}
               isPublished={course.isPublished}
+              chaptersLength={course.chapters.length}
             />
           ))
         )}

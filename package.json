@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@tsconfig/recommended": "^1.0.13",
     "eslint": "^9",
     "eslint-config-next": "16.0.5",
     "tailwindcss": "^4"

@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { updateChapter } from '@/lib/actions/chapter';
-import { toast } from 'react-hot-toast'; // or use alert()
+import { updateChapter } from '@/lib/actions/chapter'; // Path preserved
+import { toast } from 'react-hot-toast';
+import GlassCard from '@/components/ui/GlassCard';
 
 export default function ChapterDescriptionForm({ initialData, courseId, chapterId }) {
   const router = useRouter();
@@ -16,18 +17,27 @@ export default function ChapterDescriptionForm({ initialData, courseId, chapterI
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    await updateChapter(courseId, chapterId, { description });
-    setIsEditing(false);
-    toast.success('Chapter description updated successfully');
-    router.refresh();
-    setIsLoading(false);
+
+    try {
+      await updateChapter(courseId, chapterId, { description });
+      toast.success('Chapter description updated successfully');
+      setIsEditing(false);
+      router.refresh();
+    } catch {
+      toast.error('Something went wrong');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
-      <div className="font-medium flex items-center justify-between">
+    <GlassCard className="mt-6">
+      <div className="font-medium flex items-center justify-between text-slate-100">
         Chapter Description
-        <button onClick={toggleEdit} className="text-blue-700 hover:underline text-sm">
+        <button
+          onClick={toggleEdit}
+          className="text-sky-400 hover:text-sky-300 transition text-sm font-semibold"
+        >
           {isEditing ? 'Cancel' : 'Edit description'}
         </button>
       </div>
@@ -35,7 +45,11 @@ export default function ChapterDescriptionForm({ initialData, courseId, chapterI
       {!isEditing && (
         <div className={`text-sm mt-2 ${!initialData.description && 'text-slate-500 italic'}`}>
           {!initialData.description && 'No description'}
-          {initialData.description && <div>{initialData.description}</div>}
+          {initialData.description && (
+            <div className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+              {initialData.description}
+            </div>
+          )}
         </div>
       )}
 
@@ -43,7 +57,7 @@ export default function ChapterDescriptionForm({ initialData, courseId, chapterI
         <form onSubmit={onSubmit} className="space-y-4 mt-4">
           <textarea
             disabled={isLoading}
-            className="flex w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="flex w-full rounded-md border border-slate-600 bg-slate-900/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             rows="5"
             placeholder="e.g. 'In this lesson, we will cover...'"
             value={description}
@@ -52,12 +66,12 @@ export default function ChapterDescriptionForm({ initialData, courseId, chapterI
           <button
             disabled={isLoading || !description}
             type="submit"
-            className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-slate-800"
+            className="bg-sky-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition disabled:opacity-50"
           >
             Save
           </button>
         </form>
       )}
-    </div>
+    </GlassCard>
   );
 }

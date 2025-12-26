@@ -113,18 +113,30 @@ export async function deleteChapter(courseId, chapterId) {
 
     await connectDB();
 
-    // 1. Remove chapter from Course's list
-    await Course.findByIdAndUpdate(courseId, {
-      $pull: { chapters: chapterId },
+    // 1. Find the chapter to ensure it belongs to the user (via course)
+    const ownCourse = await Course.findOne({ _id: courseId, userId });
+    if (!ownCourse) return { error: 'Unauthorized' };
+
+    const chapter = await Chapter.findOne({ _id: chapterId, courseId });
+    if (!chapter) return { error: 'Chapter not found' };
+
+    // 2. Delete the Chapter
+    await Chapter.deleteOne({ _id: chapterId });
+
+    // 3. Check if the course still has any published chapters
+    // If not, we should unpublish the entire course
+    const publishedChaptersInCourse = await Chapter.find({
+      courseId,
+      isPublished: true,
     });
 
-    // 2. Delete the actual chapter
-    await Chapter.findByIdAndDelete(chapterId);
-
-    // Note: In a real app, you might also want to delete the video from storage here
+    if (!publishedChaptersInCourse.length) {
+      await Course.updateOne({ _id: courseId }, { isPublished: false });
+    }
 
     return { success: true };
   } catch (error) {
-    return { error: 'Something went wrong' };
+    console.log('[DELETE_CHAPTER]', error);
+    return { error: 'Internal Error' };
   }
 }

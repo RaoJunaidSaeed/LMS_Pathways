@@ -4,13 +4,19 @@ import Link from 'next/link';
 import connectDB from '@/lib/db';
 import Chapter from '@/models/Chapter';
 
-import ChapterVideoForm from '@/components/chapters/ChapterVideoForm';
+// Components
 import ChapterTitleForm from '@/components/chapters/ChapterTitleForm';
-import ChapterActions from '@/components/chapters/ChapterActions';
 import ChapterDescriptionForm from '@/components/chapters/ChapterDescriptionForm';
-import LinkTag from '@/components/ui/LinkTag';
-// You can reuse Title/Description forms here too if you modify them slightly to accept chapterId,
-// or create specific ChapterTitleForm/ChapterDescriptionForm components.
+import ChapterAccessForm from '@/components/chapters/ChapterAccessForm';
+import ChapterVideoForm from '@/components/chapters/ChapterVideoForm';
+import ChapterActions from '@/components/chapters/ChapterActions';
+
+// 🎨 Reusable Icon Badge (Matches Course Page)
+const IconBadge = ({ icon }) => (
+  <div className="rounded-full flex items-center justify-center bg-sky-500/10 p-2 text-sky-400 ring-1 ring-sky-500/20 shadow-[0_0_10px_rgba(14,165,233,0.15)]">
+    {icon}
+  </div>
+);
 
 export default async function ChapterIdPage({ params }) {
   const { courseId, chapterId } = await params;
@@ -20,36 +26,40 @@ export default async function ChapterIdPage({ params }) {
 
   await connectDB();
 
-  // Fetch the specific chapter
-  let chapter = await Chapter.findById(chapterId);
+  let chapter = await Chapter.findOne({ _id: chapterId, courseId });
+  if (!chapter) return redirect('/');
 
-  if (!chapter) return redirect('/'); // Handle invalid ID
-
-  // Serialize for client
+  // Clean data for client components to avoid serialization errors
   chapter = JSON.parse(JSON.stringify(chapter));
 
-  // Completion check
   const requiredFields = [chapter.title, chapter.description, chapter.videoUrl];
-  const completionText = `(${requiredFields.filter(Boolean).length}/${requiredFields.length})`;
+
+  const totalFields = requiredFields.length;
+  const completedFields = requiredFields.filter(Boolean).length;
+  const completionText = `(${completedFields}/${totalFields})`;
   const isComplete = requiredFields.every(Boolean);
 
   return (
-    <div className="p-6">
-      {/* Back Button */}
-      <div className="flex items-center justify-between w-full">
+    // 🛠️ FIX: Applied w-[90%] and mx-auto to align with Dashboard/Courses/Setup pages
+    <div className="w-[90%] mx-auto py-10 text-slate-200">
+      {/* --- HEADER --- */}
+      <div className="flex items-center justify-between mb-8">
         <div className="w-full">
-          <LinkTag
-            path={`/teacher/courses/${courseId}`}
-            className="flex items-center text-sm hover:opacity-75 transition mb-6"
+          <Link
+            href={`/teacher/courses/${courseId}`}
+            className="flex items-center text-sm hover:text-sky-400 transition mb-6 text-slate-400"
           >
             ⬅️ Back to course setup
-          </LinkTag>
+          </Link>
 
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col gap-y-2">
-              <h1 className="text-2xl font-medium">Chapter Creation</h1>
-              <span className="text-sm text-slate-700">Complete all fields {completionText}</span>
+              <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-sky-400 to-emerald-400">
+                Chapter Creation
+              </h1>
+              <span className="text-sm text-slate-400">Complete all fields {completionText}</span>
             </div>
+
             <ChapterActions
               disabled={!isComplete}
               courseId={courseId}
@@ -60,17 +70,15 @@ export default async function ChapterIdPage({ params }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
-        {/* LEFT COLUMN: Metadata */}
-        <div className="space-y-4">
+      {/* --- MAIN GRID --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* LEFT COLUMN */}
+        <div className="space-y-8">
           <div>
-            <div className="flex items-center gap-x-2">
-              <div className="rounded-full flex items-center justify-center bg-blue-100 p-2 text-blue-700">
-                📝
-              </div>
-              <h2 className="text-xl font-semibold">Customize your chapter</h2>
+            <div className="flex items-center gap-x-3 mb-6">
+              <IconBadge icon="✏️" />
+              <h2 className="text-xl font-semibold text-slate-100">Customize your chapter</h2>
             </div>
-
             <ChapterTitleForm initialData={chapter} courseId={courseId} chapterId={chapterId} />
             <ChapterDescriptionForm
               initialData={chapter}
@@ -78,19 +86,25 @@ export default async function ChapterIdPage({ params }) {
               chapterId={chapterId}
             />
           </div>
+
+          <div>
+            <div className="flex items-center gap-x-3 mb-6">
+              <IconBadge icon="👁️" />
+              <h2 className="text-xl font-semibold text-slate-100">Access Settings</h2>
+            </div>
+            <ChapterAccessForm initialData={chapter} courseId={courseId} chapterId={chapterId} />
+          </div>
         </div>
 
-        {/* RIGHT COLUMN: Video */}
-        <div>
-          <div className="flex items-center gap-x-2">
-            <div className="rounded-full flex items-center justify-center bg-blue-100 p-2 text-blue-700">
-              📺
+        {/* RIGHT COLUMN */}
+        <div className="space-y-8">
+          <div>
+            <div className="flex items-center gap-x-3 mb-6">
+              <IconBadge icon="📺" />
+              <h2 className="text-xl font-semibold text-slate-100">Add a video</h2>
             </div>
-            <h2 className="text-xl font-semibold">Add a video</h2>
+            <ChapterVideoForm initialData={chapter} courseId={courseId} chapterId={chapterId} />
           </div>
-
-          {/* THE VIDEO FORM */}
-          <ChapterVideoForm initialData={chapter} courseId={courseId} chapterId={chapterId} />
         </div>
       </div>
     </div>

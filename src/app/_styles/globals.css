@@ -1,11 +1,58 @@
 @import "tailwindcss";
 
+/* 1. Define your custom Theme Variables directly here */
+@theme {
+  /* The "Midnight Glow" Palette */
+  --color-midnight-900: #141E30;
+  --color-midnight-800: #243B55;
+  --color-midnight-card: rgba(20, 30, 48, 0.6);
 
+  /* Accent Colors (Sky Blue) */
+  --color-sky-400: #38bdf8;
+  --color-sky-500: #0ea5e9;
+  --color-sky-600: #0284c7;
 
+  /* Your custom animation */
+  --animate-bounce-slow: bounce 3s infinite;
+}
+
+/* 2. Global Styles */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  /* Apply the Midnight Glow Gradient */
+  background: linear-gradient(to right, #141E30, #243B55);
+  color: #e2e8f0;
+  /* Light text (Slate-200) for readability */
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* 3. Custom Scrollbar (Premium Dark Look) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141E30;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #243B55;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
+/* 4. Utility Classes */
+/* This keeps your bounce animation available as "animate-bounce-slow" */
 .animate-bounce-slow {
   animation: bounce 3s infinite;
 }
-
 /* :root {
   --background: #ffffff;
   --foreground: #171717;
