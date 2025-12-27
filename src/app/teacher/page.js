@@ -2,6 +2,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import connectDB from '@/lib/db';
 import Course from '@/models/Course';
+import Chapter from '@/models/Chapter'; // 1. Added Import: Required for populate to work
 import LinkTag from '@/components/ui/LinkTag';
 import CourseCard from '@/components/courses/CourseCard';
 
@@ -18,7 +19,8 @@ export default async function Dashboard() {
   await connectDB();
 
   // Fetch all courses owned by user
-  const allCourses = await Course.find({ userId }).sort({ createdAt: -1 });
+  // 2. Added populate: This fills the 'chapters' array so we can count them
+  const allCourses = await Course.find({ userId }).populate('chapters').sort({ createdAt: -1 });
 
   // 3. Calculate Stats
   // Active = Published courses
@@ -90,7 +92,8 @@ export default async function Dashboard() {
                     imageUrl={course.imageUrl}
                     category={course.category}
                     isPublished={course.isPublished}
-                    chaptersLength={course.chapters.length}
+                    // 3. Added Safety Check: Prevents crash if chapters is undefined
+                    chaptersLength={course.chapters?.length || 0}
                   />
                 ))}
               </div>
@@ -132,23 +135,48 @@ function StatCard({ title, value, icon }) {
   );
 }
 
-// 'use client';
-
+// import { auth, currentUser } from '@clerk/nextjs/server';
+// import { redirect } from 'next/navigation';
+// import connectDB from '@/lib/db';
+// import Course from '@/models/Course';
 // import LinkTag from '@/components/ui/LinkTag';
-// import { useUser } from '@clerk/nextjs';
+// import CourseCard from '@/components/courses/CourseCard';
 
-// export default function Dashboard() {
-//   const { user } = useUser();
-//   const role = user?.publicMetadata?.role;
+// export default async function Dashboard() {
+//   // 1. Auth & User Data
+//   const user = await currentUser();
+//   const { userId } = await auth();
+
+//   if (!userId || !user) {
+//     return redirect('/');
+//   }
+
+//   // 2. Fetch Data from DB
+//   await connectDB();
+
+//   // Fetch all courses owned by user
+//   const allCourses = await Course.find({ userId }).sort({ createdAt: -1 });
+
+//   // 3. Calculate Stats
+//   // Active = Published courses
+//   const publishedCourses = allCourses.filter((course) => course.isPublished);
+//   const activeCoursesCount = publishedCourses.length;
+
+//   // Placeholder logic for Students & Earnings (Requires a 'Purchase' model later)
+//   const totalStudents = 0;
+//   const totalEarnings = 0;
+
+//   // 4. Clean Data (Serialization for Next.js)
+//   const plainPublishedCourses = JSON.parse(JSON.stringify(publishedCourses));
+//   const role = user.publicMetadata?.role;
 
 //   return (
-//     // 🛠️ Applied w-[90%] and mx-auto to align with your Courses page
 //     <div className="w-[90%] mx-auto py-10 min-h-screen">
 //       {/* --- HEADER SECTION --- */}
 //       <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 //         <div>
 //           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-sky-400 to-emerald-400">
-//             Welcome back, {user?.firstName}!
+//             Welcome back, {user.firstName}!
 //           </h1>
 //           <p className="text-slate-400 mt-2">
 //             You are logged in as a{' '}
@@ -160,17 +188,17 @@ function StatCard({ title, value, icon }) {
 //       {/* --- INSTRUCTOR VIEW --- */}
 //       {role === 'teacher' && (
 //         <div className="space-y-10">
-//           {/* 1. Stats Grid */}
+//           {/* 1. Stats Grid (Real Data) */}
 //           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//             <StatCard title="Total Students" value="0" icon="👥" />
-//             <StatCard title="Active Courses" value="0" icon="📘" />
-//             <StatCard title="Total Earnings" value="$0.00" icon="💰" />
+//             <StatCard title="Total Students" value={totalStudents} icon="👥" />
+//             <StatCard title="Active Courses" value={activeCoursesCount} icon="📘" />
+//             <StatCard title="Total Earnings" value={`$${totalEarnings.toFixed(2)}`} icon="💰" />
 //           </div>
 
-//           {/* 2. Courses Section */}
+//           {/* 2. Active Courses Section */}
 //           <div>
 //             <div className="flex items-center justify-between mb-6">
-//               <h3 className="text-2xl font-bold text-slate-100">My Courses</h3>
+//               <h3 className="text-2xl font-bold text-slate-100">Active Courses</h3>
 
 //               <div className="flex items-center gap-x-4">
 //                 <LinkTag path="/teacher/courses">
@@ -187,13 +215,36 @@ function StatCard({ title, value, icon }) {
 //               </div>
 //             </div>
 
-//             {/* Empty State Placeholder (Styled like a glass card) */}
-//             <div className="bg-slate-900/40 backdrop-blur-sm p-12 rounded-xl border-2 border-dashed border-slate-700 text-center flex flex-col items-center justify-center gap-y-4">
-//               <div className="p-4 rounded-full bg-slate-800/50">
-//                 <span className="text-4xl">📂</span>
+//             {/* Course Grid or Empty State */}
+//             {plainPublishedCourses.length > 0 ? (
+//               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+//                 {plainPublishedCourses.map((course) => (
+//                   <CourseCard
+//                     key={course._id}
+//                     id={course._id}
+//                     title={course.title}
+//                     price={course.price}
+//                     imageUrl={course.imageUrl}
+//                     category={course.category}
+//                     isPublished={course.isPublished}
+//                     chaptersLength={course.chapters.length}
+//                   />
+//                 ))}
 //               </div>
-//               <p className="text-slate-400">You haven&apos;t created any courses yet.</p>
-//             </div>
+//             ) : (
+//               // Empty State
+//               <div className="bg-slate-900/40 backdrop-blur-sm p-12 rounded-xl border-2 border-dashed border-slate-700 text-center flex flex-col items-center justify-center gap-y-4">
+//                 <div className="p-4 rounded-full bg-slate-800/50">
+//                   <span className="text-4xl">📂</span>
+//                 </div>
+//                 <p className="text-slate-400">You have no published courses yet.</p>
+//                 <LinkTag path="/teacher/create">
+//                   <span className="text-sky-400 hover:underline cursor-pointer">
+//                     Create and publish one now
+//                   </span>
+//                 </LinkTag>
+//               </div>
+//             )}
 //           </div>
 //         </div>
 //       )}
@@ -201,7 +252,7 @@ function StatCard({ title, value, icon }) {
 //   );
 // }
 
-// // --- Helper Component: StatCard (Glass Style) ---
+// // --- Helper Component: StatCard ---
 // function StatCard({ title, value, icon }) {
 //   return (
 //     <div className="bg-slate-900/60 backdrop-blur-md p-6 rounded-xl border border-slate-700 shadow-lg hover:bg-slate-800/60 transition group">

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import LinkTag from '../ui/LinkTag';
-import GlassCard from '@/components/ui/GlassCard'; // Optional: Use GlassCard or the styles below
+// import GlassCard from '@/components/ui/GlassCard';
 
 export default function CourseCard({
   id,
@@ -10,13 +10,15 @@ export default function CourseCard({
   isPublished,
   imageUrl,
   chaptersLength,
+  baseUrl = '/teacher/courses', // 🆕 Default to teacher, override for students
 }) {
   return (
-    <LinkTag path={`/teacher/courses/${id}`}>
-      {/* We apply the Glass effect manually here instead of using <GlassCard> directly 
-         if you want the hover effect to be specific to the card interaction.
+    <LinkTag path={`${baseUrl}/${id}`}>
+      {/* Glass Effect Card
+        - Hover: Scales slightly and glows
+        - Layout: Flex Column to stack Image -> Content -> Footer 
       */}
-      <div className="group hover:shadow-2xl transition overflow-hidden border border-slate-700 rounded-lg p-3 h-full bg-slate-900/40 backdrop-blur-md hover:bg-slate-800/60 hover:border-slate-600">
+      <div className="group hover:shadow-2xl transition overflow-hidden border border-slate-700 rounded-lg p-3 h-full bg-slate-900/40 backdrop-blur-md hover:bg-slate-800/60 hover:border-slate-600 flex flex-col">
         {/* Image Container */}
         <div className="relative w-full aspect-video rounded-md overflow-hidden bg-slate-800 border border-slate-700/50">
           {imageUrl ? (
@@ -33,12 +35,14 @@ export default function CourseCard({
           )}
         </div>
 
-        <div className="flex justify-between items-center pt-4">
-          <div className="text-lg md:text-base font-medium text-slate-200 group-hover:text-sky-400 transition line-clamp-2">
+        {/* Content Section (Title, Category, Chapters) */}
+        {/* 🛠️ FIX: Changed to 'flex-col' so items stack vertically */}
+        <div className="flex flex-col pt-4 grow">
+          <div className="text-lg md:text-base font-medium text-slate-200 group-hover:text-sky-400 transition line-clamp-2 leading-tight">
             {title}
           </div>
 
-          <p className="text-xs text-slate-400 mt-1 font-light">{category || 'Uncategorized'}</p>
+          <p className="text-xs text-slate-400 mt-2 font-light">{category || 'Uncategorized'}</p>
 
           <div className="my-3 flex items-center gap-x-2 text-sm md:text-xs">
             <div className="flex items-center gap-x-1 text-slate-400 bg-slate-800/50 px-2 py-1 rounded-md border border-slate-700/50">
@@ -49,7 +53,9 @@ export default function CourseCard({
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-between mt-auto pt-2 border-t border-slate-700/50">
+
+        {/* Footer Section (Price & Status) */}
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-700/50">
           <p className="text-md md:text-sm font-medium text-slate-200">
             {price ? `$${price}` : 'Free'}
           </p>

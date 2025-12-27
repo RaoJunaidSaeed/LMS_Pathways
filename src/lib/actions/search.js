@@ -2,5 +2,4 @@
 
 export async function searchAction(formData) {
   const searchedQuery = formData.get('searchedCourse');
-  console.log(searchedQuery);
 }
