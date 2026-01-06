@@ -13,7 +13,7 @@ export default function OnboardingPage() {
     const res = await completeOnboarding(formData);
     if (res?.success) {
       await user?.reload();
-      router.push(res.role === 'student' ? '/studentdashboard' : '/teacherdashboard');
+      router.push(res.role === 'student' ? '/student' : '/teacher');
     }
   };
 
