@@ -92,6 +92,16 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
 
 The global loading spinner (`src/app/loading.js`) was redesigned from the default plain-text "loading..." to a centered fullscreen overlay. It uses `fixed inset-0` positioning with flexbox centering, a CSS-only spinning circle in sky-blue (`border-sky-400 border-t-transparent animate-spin`), pulsing "Loading, please wait..." text, and a semi-transparent dark backdrop (`bg-[#141E30]/80`) matching the app's theme. No external dependencies — pure Tailwind utility classes.
 
+## Github Related Data
+
+- **Remote**: `origin` → `https://github.com/RaoJunaidSaeed/LMS_Pathways.git`
+- **Main branch**: `main`
+- **Active feature branch**: `feature/update-logo-text`
+- **Deployment**: Vercel at [lms-pathways.vercel.app](https://lms-pathways.vercel.app)
+- **Git credential helper**: `manager` (Windows Credential Manager)
+- **GitHub CLI (`gh`)**: used for authentication — if push fails with 403, run `gh auth logout` then `gh auth login` to switch accounts
+- **Owner account**: `RaoJunaidSaeed`
+
 ## Incomplete Features
 
 - `src/lib/actions/search.js` — skeleton, search not fully implemented

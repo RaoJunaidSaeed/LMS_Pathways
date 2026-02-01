@@ -15,7 +15,7 @@ export default function TeacherLayout({ children }) {
       </div>
 
       {/* 3. MAIN CONTENT */}
-      <main className="md:pl-56 pt-[80px] h-full">{children}</main>
+      <main className="md:pl-56 pt-[80px]  bg-slate-950">{children}</main>
     </div>
   );
 }
