@@ -1,7 +1,6 @@
 'use client';
 
 import { isYouTubeUrl, getVideoId } from '@/lib/utils';
-import ReactPlayer from 'react-player';
 
 export default function VideoPlayer({ playbackId, isLocked, title }) {
   const isYT = isYouTubeUrl(playbackId);
@@ -24,12 +23,11 @@ export default function VideoPlayer({ playbackId, isLocked, title }) {
           allowFullScreen
         />
       ) : playbackId ? (
-        <ReactPlayer
-          url={playbackId}
+        <video
+          src={playbackId}
           controls
-          width="100%"
-          height="100%"
-          style={{ position: 'absolute', top: 0, left: 0 }}
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-contain"
         />
       ) : (
         <div className="flex items-center justify-center h-full text-slate-400">
