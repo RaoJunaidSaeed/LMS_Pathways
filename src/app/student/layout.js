@@ -15,7 +15,7 @@ export default function StudentLayout({ children }) {
       </div>
 
       {/* 3. Main Content */}
-      <main className="md:pl-56 pt-[80px] h-full">{children}</main>
+      <main className="md:pl-56 pt-[80px]  bg-slate-950">{children}</main>
     </div>
   );
 }
