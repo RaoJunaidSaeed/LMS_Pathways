@@ -1,64 +1,54 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SignInButton,
   SignUpButton,
   SignedIn,
   SignedOut,
   UserButton,
-  ClerkLoading,
-  ClerkLoaded,
 } from '@clerk/nextjs';
 import LinkTag from './LinkTag';
 import { useUserRole } from '@/utils/context/UserRoleContext.js';
 
 export default function SignInUp() {
   const { dashboardUrl } = useUserRole();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
     <>
-      <ClerkLoading>
+      <SignedOut>
         <div className="flex items-center gap-6">
-          <button className="text-gray-600 hover:text-gray-700 cursor-pointer text-lg font-medium transition-all transform hover:-translate-y-0.5">
-            Log in
-          </button>
+          <SignInButton mode="modal">
+            <button className="text-gray-600 hover:text-gray-700 cursor-pointer text-lg font-medium transition-all transform hover:-translate-y-0.5">
+              Log in
+            </button>
+          </SignInButton>
 
-          <button className="bg-blue-600 text-white px-5 py-2 cursor-pointer rounded-full font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-            Sign Up
-          </button>
+          <SignUpButton mode="modal" forceRedirectUrl="/onboarding">
+            <button className="bg-blue-600 text-white px-5 py-2 cursor-pointer rounded-full font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+              Sign Up
+            </button>
+          </SignUpButton>
         </div>
-      </ClerkLoading>
+      </SignedOut>
 
-      <ClerkLoaded>
-        <SignedOut>
-          <div className="flex items-center gap-6">
-            {/* Login Popup */}
-            <SignInButton mode="modal">
-              <button className="text-gray-600 hover:text-gray-700 cursor-pointer text-lg font-medium transition-all transform hover:-translate-y-0.5">
-                Log in
-              </button>
-            </SignInButton>
-
-            {/* Signup Popup */}
-            <SignUpButton mode="modal" forceRedirectUrl="/onboarding">
-              <button className="bg-blue-600 text-white px-5 py-2 cursor-pointer rounded-full font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                Sign Up
-              </button>
-            </SignUpButton>
-          </div>
-        </SignedOut>
-
-        <SignedIn>
-          <div className="flex items-center gap-4">
-            <LinkTag path={dashboardUrl}>
-              <span className="text-gray-600 hover:text-blue-600 font-medium cursor-pointer transition">
-                Dashboard
-              </span>
-            </LinkTag>
-            <UserButton afterSignOutUrl="/" />
-          </div>
-        </SignedIn>
-      </ClerkLoaded>
+      <SignedIn>
+        <div className="flex items-center gap-4">
+          <LinkTag path={dashboardUrl}>
+            <span className="text-gray-600 hover:text-blue-600 font-medium cursor-pointer transition">
+              Dashboard
+            </span>
+          </LinkTag>
+          <UserButton afterSignOutUrl="/" />
+        </div>
+      </SignedIn>
     </>
   );
 }
