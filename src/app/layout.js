@@ -19,7 +19,7 @@ export const metadata = {
   title: 'LMS',
   description: 'Developed By JunaidRao',
   icons: {
-    icon: './logo2.png',
+    icon: '/logo2.png',
   },
 };
 

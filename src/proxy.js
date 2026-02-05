@@ -30,6 +30,14 @@ export default clerkMiddleware(async (auth, req) => {
       const dashboardUrl = new URL(targetPath, req.url);
       return NextResponse.redirect(dashboardUrl);
     }
+
+    // Prevent students from accessing teacher routes and vice versa
+    if (role === 'student' && url.pathname.startsWith('/teacher')) {
+      return NextResponse.redirect(new URL('/student', req.url));
+    }
+    if (role === 'teacher' && url.pathname.startsWith('/student')) {
+      return NextResponse.redirect(new URL('/teacher', req.url));
+    }
   }
 });
 

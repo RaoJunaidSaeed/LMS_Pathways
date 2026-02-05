@@ -16,6 +16,11 @@ export default function MobileMenu({ links, SignInUp }) {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isOpen && menuRef.current && !menuRef.current.contains(event.target)) {
+        // Clerk renders its UserButton dropdown in a portal at the body level,
+        // outside our menu DOM. Don't close the menu when clicking inside Clerk UI.
+        if (event.target.closest('.cl-rootBox, .cl-card, .cl-userButtonPopoverCard, .cl-popoverBox, .cl-modalBackdrop, .cl-modalContent')) {
+          return;
+        }
         setIsOpen(false);
       }
     };

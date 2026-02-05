@@ -5,7 +5,7 @@ export default function StudentLayout({ children }) {
   return (
     <div className="h-full bg-slate-950">
       {/* 1. Header (Same Navbar as Teacher, but cleaner) */}
-      <div className="h-[80px] md:pl-56 fixed inset-y-0 w-full z-50">
+      <div className="h-[80px] md:pl-56 fixed top-0 w-full z-50">
         <Navbar />
       </div>
 

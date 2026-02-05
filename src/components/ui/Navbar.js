@@ -10,7 +10,6 @@ export default function Navbar() {
   // 1. Define Routes
   const teacherRoutes = [
     { path: '/teacher/courses', label: 'Courses' },
-    { path: '/teacher/analytics', label: 'Analytics' },
   ];
 
   const studentRoutes = [

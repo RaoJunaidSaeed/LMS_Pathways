@@ -9,11 +9,6 @@ const teacherRoutes = [
     label: 'Courses',
     href: '/teacher/courses',
   },
-  {
-    icon: '📊',
-    label: 'Analytics',
-    href: '/teacher/analytics',
-  },
 ];
 
 export default function TeacherSidebar() {
